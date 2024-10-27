@@ -11,14 +11,14 @@ class AjaxableResponseMixin(object):
     """
     def form_invalid(self, form):
         response = super(AjaxableResponseMixin, self).form_invalid(form)
-        if self.request.is_ajax():
+        if self.request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             return JsonResponse(form.errors, status=400)
         else:
             return response
 
     def form_valid(self, form):
         super(AjaxableResponseMixin, self).form_valid(form)
-        if self.request.is_ajax():
+        if self.request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             objects = json.loads(self.request.POST.get('objects', '[]'))
             data = {
                 'message': 'success'
